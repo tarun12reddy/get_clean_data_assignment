@@ -13,17 +13,12 @@
 
 # use in data.table...? Or just split the data frame?
 
-
-getColM <- function(x, asdf=null, dt=NULL){
-    a<-asdf[x,'a']
-    s<-asdf[x,'s']
-    sbD  <- dt[dt$act==a & dt$sbj == s,]
-    cm <- colMeans(sbD[1:66]) # or possibly with var names?
-    cm <- as.data.frame(t(cm))
-    cm$sbj <- s
-    cm$act <- a
-    cm
+getAllFiles <-  function(zipfile){
+    tdir <- tempdir()
+    unzip(zipfile, exdir=tdir)
+    file.path(tdir, 'UCI HAR Dataset')
 }
+
 
 getLabels <- function(ffpth){
     acts <- read.table(file.path(ffpth, 'activity_labels.txt'))
@@ -47,6 +42,17 @@ open_and_mergeTXT <- function(ffpth, vrbIx, vrbNms, actNames, fld){
     ftrs
 }
 
+getColM <- function(x, asdf=null, dt=NULL){
+    a<-asdf[x,'a']
+    s<-asdf[x,'s']
+    sbD  <- dt[dt$act==a & dt$sbj == s,]
+    cm <- colMeans(sbD[1:66]) # or possibly with var names?
+    cm <- as.data.frame(t(cm))
+    cm$sbj <- s
+    cm$act <- a
+    cm
+}
+
 getAverages<-function(ftDB){
     s<-unique(ftDB$sbj)
     a <- levels(ftDB$act)
@@ -57,9 +63,9 @@ getAverages<-function(ftDB){
     do.call(rbind, lapply(row.names(as_df), getColM, as_df, dt=ftDB))
 }
 
-run <- function(){
-    tst <- open_and_mergeTXT(file.path(getwd(), 'test'), lbls$vix, lbls$vlb, lbls$a, 'test')
-    print('done test')
-    both <- rbind(tst, open_and_mergeTXT(file.path(getwd(), 'train'), lbls$vix, lbls$vlb, lbls$a, 'train'))
+run <- function(zipfile){
+    localpath <- getAllFiles(zipfile)
+    tst <- open_and_mergeTXT(file.path(localpath, 'test'), lbls$vix, lbls$vlb, lbls$a, 'test')
+    both <- rbind(tst, open_and_mergeTXT(file.path(localpath, 'train'), lbls$vix, lbls$vlb, lbls$a, 'train'))
     getAverages(both)
 }
