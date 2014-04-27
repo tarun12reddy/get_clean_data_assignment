@@ -1,7 +1,7 @@
 Code Book
 ==========
 
-This program requires a zip file with Samsung data to work. This data can be downloaded here.
+This program requires a zip file with Samsung data to work. This data can be downloaded [here](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip ).
 
 The program creates a data.frame of 180 observations with 68 variables.
 
